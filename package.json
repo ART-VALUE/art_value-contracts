@@ -1,0 +1,23 @@
+{
+  "name": "art_value-contracts",
+  "version": "1.0.0",
+  "description": "Collection of Solidity smart contracts supporting the Art_Value project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ART-VALUE/art_value-contracts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ART-VALUE/art_value-contracts/issues"
+  },
+  "homepage": "https://github.com/ART-VALUE/art_value-contracts#readme",
+  "devDependencies": {
+    "@openzeppelin/contracts-upgradeable": "^3.4.1",
+    "@openzeppelin/truffle-upgrades": "^1.5.0"
+  }
+}
