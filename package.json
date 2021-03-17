@@ -18,6 +18,7 @@
   "homepage": "https://github.com/ART-VALUE/art_value-contracts#readme",
   "devDependencies": {
     "@openzeppelin/contracts-upgradeable": "^3.4.1",
+    "@openzeppelin/test-helpers": "^0.5.10",
     "@openzeppelin/truffle-upgrades": "^1.5.0"
   }
 }

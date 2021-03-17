@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity 0.7.4;
+pragma solidity >=0.6.0 <0.8.0;
 
 /// @title Art_Value Coin ERC777 Fungible Token Contract
 /// @author Pieter Fiers
 
-
-// import "./ERC777ERC20BaseToken.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC777/ERC777Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
-
 
 contract ArtValueCoin is Initializable, ERC777Upgradeable {
     function initialize(
