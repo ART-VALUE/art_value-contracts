@@ -4,7 +4,12 @@
   "description": "Collection of Solidity smart contracts supporting the Art_Value project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "generate-types": "typechain --target=truffle-v5 'build/contracts/*.json' && node patch-truffle-contract-send.mjs",
+    "build": "truffle compile && npm run generate-types",
+    "postinstall": "npm run build",
+    "migrate": "tsc -p ./tsconfig.migrate.json --outDir ./migrations && truffle migrate",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc -p ./tsconfig.test.json --outDir ./test && truffle test"
   },
   "repository": {
     "type": "git",
@@ -19,6 +24,13 @@
   "devDependencies": {
     "@openzeppelin/contracts-upgradeable": "^3.4.1",
     "@openzeppelin/test-helpers": "^0.5.10",
-    "@openzeppelin/truffle-upgrades": "^1.5.0"
+    "@openzeppelin/truffle-upgrades": "^1.5.0",
+    "@typechain/truffle-v5": "^4.0.1",
+    "@types/chai": "^4.2.15",
+    "@types/mocha": "^8.2.1",
+    "bn.js": "^5.2.0",
+    "typechain": "^4.0.3",
+    "typescript": "^4.2.3",
+    "web3": "^1.3.4"
   }
 }

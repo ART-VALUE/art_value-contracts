@@ -26,7 +26,7 @@
 const path = require('path');
 
 module.exports = {
-  contracts_build_directory: path.join(__dirname, "/build"),
+  // contracts_build_directory: path.join(__dirname, "/build"),
 
   /**
    * Networks define how you connect to your ethereum client and let you set the
