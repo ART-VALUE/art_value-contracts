@@ -1,6 +1,4 @@
 /node_modules/
 /.openzeppelin
-/build/
-/migrations/
-/test/
-/types/
+/dist/
+/gen/
