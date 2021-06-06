@@ -2,7 +2,7 @@
 
 ## Live versions
 
-* [**Rinkeby**](https://rinkeby.etherscan.io/address/0x310411ceda6235ad7ce6e8db3febc95870af8892)
+* [**Rinkeby: 0x310411ceda6235ad7ce6e8db3febc95870af8892**](https://rinkeby.etherscan.io/address/0x310411ceda6235ad7ce6e8db3febc95870af8892)
 * **Mainnet**: not deployed yet
 
 ## Building
