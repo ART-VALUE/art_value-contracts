@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity >=0.6.0 <0.8.0;
+pragma solidity ^0.8.0;
 
 /// @title Art_Value Coin ERC777 Fungible Token Contract
 /// @author Pieter Fiers
 
 import "@openzeppelin/contracts-upgradeable/token/ERC777/ERC777Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-contract ArtValueCoin is Initializable, ERC777Upgradeable, AccessControlUpgradeable {
+contract Arts is Initializable, ERC777Upgradeable, AccessControlUpgradeable {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
 

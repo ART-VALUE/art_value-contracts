@@ -4,11 +4,16 @@
   "description": "Collection of Solidity smart contracts supporting the Art_Value project",
   "main": "index.js",
   "scripts": {
-    "generate-types": "typechain --target=truffle-v5 'gen/contracts/*.json' --outDir 'gen/types' && node patch-truffle-contract-send.mjs",
-    "build": "npm run clean && truffle compile && npm run generate-types && tsc",
+    "generate-types": "typechain --target=truffle-v5 'gen/contracts/*.json' --out-dir 'gen/types' && node patch-truffle-contract-send.mjs",
+    "build": "npm run clean && npm run build-contracts && npm run generate-types && npm run build-ts",
+    "build-contracts": "truffle compile",
+    "build-ts": "tsc",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf gen/ dist/",
-    "test": "truffle test"
+    "test": "truffle test",
+    "ganache-cli": "ganache-cli",
+    "migrate": "truffle migrate",
+    "truffle-console": "truffle console"
   },
   "repository": {
     "type": "git",
@@ -21,22 +26,27 @@
   },
   "homepage": "https://github.com/ART-VALUE/art_value-contracts#readme",
   "devDependencies": {
-    "@openzeppelin/contracts-upgradeable": "^3.4.1",
-    "@openzeppelin/test-helpers": "^0.5.10",
-    "@openzeppelin/truffle-upgrades": "^1.5.0",
-    "@typechain/truffle-v5": "^4.0.1",
-    "@types/chai": "^4.2.15",
+    "@openzeppelin/contracts-upgradeable": "^4.1.0",
+    "@openzeppelin/test-helpers": "^0.5.11",
+    "@openzeppelin/truffle-upgrades": "^1.7.0",
+    "@typechain/truffle-v5": "^5.0.0",
+    "@types/chai": "^4.2.18",
     "@types/ganache-core": "^2.7.0",
-    "@types/mocha": "^8.2.1",
+    "@types/mocha": "^8.2.2",
     "bn.js": "^5.2.0",
+    "ganache-cli": "^6.12.2",
     "ganache-core": "^2.13.2",
     "module-alias": "^2.2.2",
     "truffle": "^5.3.7",
-    "typechain": "^4.0.3",
-    "typescript": "^4.2.3",
+    "typechain": "^5.0.0",
+    "typescript": "^4.3.2",
     "web3": "^1.3.4"
   },
   "_moduleAliases": {
     "@contract-json": "dist/gen/contracts"
+  },
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^1.4.0",
+    "dotenv": "^10.0.0"
   }
 }

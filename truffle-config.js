@@ -1,20 +1,35 @@
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
-// const infuraKey = "fj4jll3k.....";
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 const path = require('path');
+require('dotenv').config()
+
+const DEPLOYER_PRIVATE_KEY = process.env['DEPLOYER_PRIVATE_KEY']
+if (DEPLOYER_PRIVATE_KEY == null) throw new Error('$DEPLOYER_PRIVATE_KEY not set')
+
+const INFURA_PROJECT_ID = process.env['INFURA_PROJECT_ID']
+if (INFURA_PROJECT_ID == null) throw new Error('$INFURA_PROJECT_ID not set')
+
+const provider = new HDWalletProvider([DEPLOYER_PRIVATE_KEY], `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`)
+console.log('Addresses: ', provider.getAddresses())
 
 module.exports = {
   contracts_build_directory: path.join(__dirname, "/gen/contracts"),
-  migrations_directory: "./dist/src/migrations",
-  test_directory: "./dist/src/test",
+  migrations_directory: "./dist/migrations",
+  test_directory: "./dist/test",
 
   networks: {
     development: {
      host: "127.0.0.1",     // Localhost (default: none)
      port: 8545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
+    },
+    rinkeby: {
+      provider: () => provider,
+      network_id: 4,
+      gas: 4500000,        // Ropsten has a lower block limit than mainnet
+      gasPrice: 10000000000,
+      // confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+      // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      // skipDryRun: false     // Skip dry run before migrations? (default: false for public nets )
     },
     // Another network with more advanced options...
     // advanced: {
@@ -51,15 +66,14 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.7.4"    // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.4",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
-      // settings: {          // See the solidity docs for advice about optimization and evmVersion
-      //  optimizer: {
-      //    enabled: false,
-      //    runs: 200
-      //  },
-      //  evmVersion: "byzantium"
-      // }
+      settings: {
+       optimizer: {
+         enabled: true,
+         runs: 400
+       }
+      }
     }
   },
 

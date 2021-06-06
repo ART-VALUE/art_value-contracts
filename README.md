@@ -16,10 +16,44 @@ npm run build
 
 Run ganache-cli (separate terminal)
 ```
-ganache-cli
+npm run ganache-cli
 ```
 
 Run tests
 ```
 npm run test
+```
+
+If you didn't touch anything in `contracts/` (only edits in `src/`), it's
+ ok to run: `npm run build-ts` instead of `npm run build` (so
+  `npm run build-ts && npm run test` as a one-liner).
+
+## Deploying
+
+On development net (ganache-cli):
+```
+npm run migrate
+```
+
+On rinkeby:
+```
+npm run migrate -- --network rinkeby
+```
+
+## Interacting with deployed contract
+
+Open truffle console:
+```
+npm run truffle-console
+```
+
+Get contract reference:
+```
+truffle(development)> let avc = await ArtValueNumber.at('<address>')
+```
+
+Do stuff:
+```
+truffle(development)> avc.numberBaseURI()
+'https://artvalue.org/n/'
 ```
