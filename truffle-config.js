@@ -4,12 +4,13 @@ require('dotenv').config()
 
 const DEPLOYER_PRIVATE_KEY = process.env['DEPLOYER_PRIVATE_KEY']
 if (DEPLOYER_PRIVATE_KEY == null) throw new Error('$DEPLOYER_PRIVATE_KEY not set')
-
 const INFURA_PROJECT_ID = process.env['INFURA_PROJECT_ID']
 if (INFURA_PROJECT_ID == null) throw new Error('$INFURA_PROJECT_ID not set')
+const ETHERSCAN_API_KEY = process.env['ETHERSCAN_API_KEY']
+if (ETHERSCAN_API_KEY == null) throw new Error('$ETHERSCAN_API_KEY not set')
 
 const provider = new HDWalletProvider([DEPLOYER_PRIVATE_KEY], `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`)
-console.log('Addresses: ', provider.getAddresses())
+console.log('Infura provider addresses: ', provider.getAddresses())
 
 module.exports = {
   contracts_build_directory: path.join(__dirname, "/gen/contracts"),
@@ -85,5 +86,13 @@ module.exports = {
 
   db: {
     enabled: false
+  },
+
+  plugins: [
+    'truffle-plugin-verify'
+  ],
+
+  api_keys: {
+    etherscan: ETHERSCAN_API_KEY
   }
 };
