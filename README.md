@@ -49,16 +49,16 @@ npm run migrate -- --network rinkeby
 
 Open truffle console:
 ```
-npm run truffle-console
+npm run truffle-console -- --network rinkeby
 ```
 
 Get contract reference:
 ```
-truffle(development)> let avc = await ArtValueNumber.at('<address>')
+truffle(rinkeby)> const avn = await ArtValueNumber.at('<address>')
 ```
 
 Do stuff:
 ```
-truffle(development)> avc.numberBaseURI()
+truffle(rinkeby)> avn.numberBaseURI()
 'https://artvalue.org/n/'
 ```

@@ -7,10 +7,10 @@ import { ArtValueNumberInstance } from "@contract/ArtValueNumber";
 
 const DEV_MINTER_ACC_INDEX = 6
 
-const NAME = "Art Value Number"
-const SYMBOL = "AVN"
-const NUMBER_BASE_URI = "https://artvalue.org/n/"
-const PLACEHOLDER_BASE_URI = "https://artvalue.org/p/"
+const NAME = 'Art Value Number'
+const SYMBOL = 'AVN'
+const NUMBER_BASE_URI = 'https://artvalue.org/fln/' // Fractionless number, should redirect to a nicely formatted version
+const PLACEHOLDER_BASE_URI = 'https://artvalue.org/p/'
  
 module.exports = async function (deployer, network, accounts) {
   const owner = accounts[0]
