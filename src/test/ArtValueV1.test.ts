@@ -5,16 +5,16 @@ import { ContractClass } from "@openzeppelin/truffle-upgrades/src/utils/truffle"
 import { BN } from 'bn.js';
 const { ZERO_ADDRESS } = constants;
 
-import { AllEvents, ArtValueNumberV1Instance, Transfer } from "@contract/ArtValueNumberV1";
+import { AllEvents, ArtValueV1Instance, Transfer } from "@contract/ArtValueV1";
 import { expectVmExceptionHasReason, expectToThrowVmExceptionWithReason } from '../util/vmException';
-const ArtValueNumberV1 = artifacts.require("ArtValueNumberV1")
+const ArtValueV1 = artifacts.require("ArtValueV1")
 
-const NAME = "Art Value Number"
-const SYMBOL = "AVN"
-const NUMBER_BASE_URI = "https://artvalue.org/fln/" // Fractionless number, should redirect to a nicely formatted version
-const PLACEHOLDER_BASE_URI = "https://artvalue.org/p/"
-const NEW_NUMBER_BASE_URI = "https://new-artvalue.org/fln/"
-const NEW_PLACEHOLDER_BASE_URI = "https://new-artvalue.org/p/"
+const NAME = "Art Value"
+const SYMBOL = "AV"
+const NUMBER_BASE_URI = "https://artvalue.org/m/n/" // /metadata/number
+const PLACEHOLDER_BASE_URI = "https://artvalue.org/m/p/" // /metadata/placeholder
+const NEW_NUMBER_BASE_URI = "https://new-artvalue.org/m/n/"
+const NEW_PLACEHOLDER_BASE_URI = "https://new-artvalue.org/m/p/"
 
 const NUMBER_ZERO = new BN(0)
 const NUMBER_FOUR = new BN(400)
@@ -29,13 +29,13 @@ const NON_EXISTENT_TOKEN_ID = new BN(88) // Not guaranteed to not exist. Just do
  4. SHA256 hash it! */
 const DEFAULT_ERC721_METADATA_JSON_HASH = new BN('38001122644619d59db81455ed499ac5e95647ce920cebc2681462a75da76cfa', 'hex')
 
-contract("ArtValueNumberV1", accounts => {
+contract("ArtValueV1", accounts => {
   const [creator, registryFunder, userB, operator, roleHolder, tokenReceiver] = accounts
 
   beforeEach(async function () {
     this.erc1820 = await singletons.ERC1820Registry(registryFunder);
     const avc = await deployProxy(
-      ArtValueNumberV1 as unknown as ContractClass,
+      ArtValueV1 as unknown as ContractClass,
       [NAME, SYMBOL, NUMBER_BASE_URI, PLACEHOLDER_BASE_URI],
       // @ts-ignore
       { initializer: 'initialize' }
@@ -51,25 +51,25 @@ contract("ArtValueNumberV1", accounts => {
   }
 
   it('has a name', async function () {
-    const avc = this.avc as ArtValueNumberV1Instance
+    const avc = this.avc as ArtValueV1Instance
 
     expect(await avc.name()).to.equal(NAME)
   });
 
   it('has a symbol', async function () {
-    const avc = this.avc as ArtValueNumberV1Instance
+    const avc = this.avc as ArtValueV1Instance
 
     expect(await avc.symbol()).to.equal(SYMBOL)
   });
 
   it('has the correct owner', async function () {
-    const avc = this.avc as ArtValueNumberV1Instance
+    const avc = this.avc as ArtValueV1Instance
 
     expect(await avc.owner()).to.equal(creator)
   });
 
   it('allows adding minters', async function () {
-    const avc = this.avc as ArtValueNumberV1Instance
+    const avc = this.avc as ArtValueV1Instance
     const MINTER_ROLE = await avc.MINTER_ROLE()
 
     expect(await avc.hasRole(MINTER_ROLE, roleHolder)).to.be.false
@@ -78,7 +78,7 @@ contract("ArtValueNumberV1", accounts => {
   });
 
   it('allows minters to mint', async function () {
-    const avc = this.avc as ArtValueNumberV1Instance
+    const avc = this.avc as ArtValueV1Instance
     const MINTER_ROLE = await avc.MINTER_ROLE()
     await avc.grantRole(MINTER_ROLE, roleHolder)
 
@@ -93,7 +93,7 @@ contract("ArtValueNumberV1", accounts => {
   });
 
   it('doesn\'t allow non-minters to mint', async function () {
-    const avc = this.avc as ArtValueNumberV1Instance
+    const avc = this.avc as ArtValueV1Instance
 
     const balanceBefore = await avc.balanceOf(tokenReceiver)
     expect(balanceBefore.toNumber()).to.equal(0)
@@ -106,7 +106,7 @@ contract("ArtValueNumberV1", accounts => {
   });
 
   it('assigns a minted placeholder token no number', async function () {
-    const avc = this.avc as ArtValueNumberV1Instance
+    const avc = this.avc as ArtValueV1Instance
     const tokenId = tokenIdFromMintRes(
       await avc.mintAsPlaceholder(tokenReceiver)
     )
@@ -120,7 +120,7 @@ contract("ArtValueNumberV1", accounts => {
   });
 
   it('assings a token minted with number a number', async function () {
-    const avc = this.avc as ArtValueNumberV1Instance
+    const avc = this.avc as ArtValueV1Instance
     const tokenId = tokenIdFromMintRes(
       await avc.mintWithNumber(tokenReceiver, NUMBER_FOUR)
     )
@@ -141,7 +141,7 @@ contract("ArtValueNumberV1", accounts => {
   describe('handles the number 0', () => {
 
     it('with 0 not being assigned', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       expect(await avc.isAssigned(NUMBER_ZERO)).to.be.false
       await expectToThrowVmExceptionWithReason(
         () => avc.tokenByNumber(NUMBER_ZERO),
@@ -156,7 +156,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('with 0 being assigned', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const tokenId = tokenIdFromMintRes(
         await avc.mintWithNumber(tokenReceiver, NUMBER_ZERO)
       )
@@ -181,7 +181,7 @@ contract("ArtValueNumberV1", accounts => {
   describe('handles URIs', () => {
 
     it('for tokens with a number assigned', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const tokenId = tokenIdFromMintRes(
         await avc.mintWithNumber(tokenReceiver, NUMBER_FOUR)
       )
@@ -190,7 +190,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('for placeholder tokens', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const tokenId = tokenIdFromMintRes(
         await avc.mintAsPlaceholder(tokenReceiver)
       )
@@ -199,7 +199,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('for non-existent tokens', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       
       await expectToThrowVmExceptionWithReason(
         () => avc.tokenURI(NON_EXISTENT_TOKEN_ID),
@@ -212,7 +212,7 @@ contract("ArtValueNumberV1", accounts => {
   describe('handles setting a token number', () => {
 
     it('for tokens with a number assigned', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const tokenId = tokenIdFromMintRes(
         await avc.mintWithNumber(tokenReceiver, NUMBER_FOUR)
       )
@@ -231,7 +231,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('for placeholder tokens', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const tokenId = tokenIdFromMintRes(
         await avc.mintAsPlaceholder(tokenReceiver)
       )
@@ -247,7 +247,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('for non-existent tokens', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       
       await expectToThrowVmExceptionWithReason(
         () => avc.setTokenNumber(NON_EXISTENT_TOKEN_ID, NUMBER_FOUR),
@@ -256,7 +256,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('by throwing for non-number-setters', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       
       await expectToThrowVmExceptionWithReason(
         () => avc.setTokenNumber(
@@ -267,7 +267,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('by allowing number setters to set', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const NUMBER_SETTER_ROLE = await avc.NUMBER_SETTER_ROLE()
       await avc.grantRole(NUMBER_SETTER_ROLE, roleHolder)
       const tokenId = tokenIdFromMintRes(
@@ -289,7 +289,7 @@ contract("ArtValueNumberV1", accounts => {
   describe('handles setting base URIs', () => {
 
     it('by setting the base URI', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
 
       expect(await avc.numberBaseURI()).to.equal(NUMBER_BASE_URI)
       expect(await avc.placeholderBaseURI()).to.equal(PLACEHOLDER_BASE_URI)
@@ -302,7 +302,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('by throwing for non-URI-setters', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
 
       expect(await avc.numberBaseURI()).to.equal(NUMBER_BASE_URI)
       
@@ -318,7 +318,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('by allowing URI-setters to set', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const URI_SETTER_ROLE = await avc.URI_SETTER_ROLE()
       await avc.grantRole(URI_SETTER_ROLE, roleHolder)
 
@@ -337,7 +337,7 @@ contract("ArtValueNumberV1", accounts => {
   describe('handles metadata hashes', () => {
 
     it('allows setting and getting', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const tokenId = tokenIdFromMintRes(
         await avc.mintAsPlaceholder(tokenReceiver)
       )
@@ -351,7 +351,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('throws for non-number-setters', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const tokenId = tokenIdFromMintRes(
         await avc.mintAsPlaceholder(tokenReceiver)
       )
@@ -363,7 +363,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('allows setting by metadata_hash_setter', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const METADATA_HASH_SETTER_ROLE = await avc.METADATA_HASH_SETTER_ROLE()
       await avc.grantRole(METADATA_HASH_SETTER_ROLE, roleHolder)
       const tokenId = tokenIdFromMintRes(
@@ -383,7 +383,7 @@ contract("ArtValueNumberV1", accounts => {
   describe('handles pausing/unpausing of tokens', () => {
 
     it('allows pausing', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const PAUSER_ROLE = await avc.PAUSER_ROLE()
       await avc.grantRole(PAUSER_ROLE, roleHolder)
       const tokenId = tokenIdFromMintRes(
@@ -404,7 +404,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('allows unpausing', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const PAUSER_ROLE = await avc.PAUSER_ROLE()
       await avc.grantRole(PAUSER_ROLE, roleHolder)
       const tokenId = tokenIdFromMintRes(
@@ -427,7 +427,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('throws for non-pausers', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const tokenId = tokenIdFromMintRes(
         await avc.mintAsPlaceholder(tokenReceiver)
       )
@@ -444,7 +444,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('allows transfer when not paused', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const tokenId = tokenIdFromMintRes(
         await avc.mintAsPlaceholder(tokenReceiver)
       )
@@ -458,7 +458,7 @@ contract("ArtValueNumberV1", accounts => {
     });
 
     it('disallows transfer when paused', async function () {
-      const avc = this.avc as ArtValueNumberV1Instance
+      const avc = this.avc as ArtValueV1Instance
       const PAUSER_ROLE = await avc.PAUSER_ROLE()
       await avc.grantRole(PAUSER_ROLE, roleHolder)
       const tokenId = tokenIdFromMintRes(

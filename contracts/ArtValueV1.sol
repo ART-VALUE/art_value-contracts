@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
-/// @title Art Value Number ERC721 Non-Fungible Token Contract
+/// @title Art Value ERC721 Non-Fungible Token Contract
 /// @author Pieter Fiers
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
@@ -22,7 +22,7 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
  *
  * TokenId for an unassigned number will be 0. 
  */
-contract ArtValueNumberV1 is 
+contract ArtValueV1 is 
     Initializable,
     ContextUpgradeable,
     AccessControlEnumerableUpgradeable,
