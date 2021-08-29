@@ -4,6 +4,7 @@ import { singletons } from '@openzeppelin/test-helpers';
 import { deployProxy } from '@openzeppelin/truffle-upgrades'
 import { ContractClass } from '@openzeppelin/truffle-upgrades/src/utils/truffle'
 import { ArtValueNumberInstance } from "@contract/ArtValueNumber";
+import { wrapProvider } from '@openzeppelin/truffle-upgrades/dist/utils';
 
 const DEV_MINTER_ACC_INDEX = 6
 

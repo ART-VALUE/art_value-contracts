@@ -9,8 +9,14 @@ if (INFURA_PROJECT_ID == null) throw new Error('$INFURA_PROJECT_ID not set')
 const ETHERSCAN_API_KEY = process.env['ETHERSCAN_API_KEY']
 if (ETHERSCAN_API_KEY == null) throw new Error('$ETHERSCAN_API_KEY not set')
 
-const provider = new HDWalletProvider([DEPLOYER_PRIVATE_KEY], `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`)
-console.log('Infura provider addresses: ', provider.getAddresses())
+let liveProvider = null;
+liveProviderGetter = () => {
+  if (liveProvider != null) return liveProvider
+  const provider = new HDWalletProvider([DEPLOYER_PRIVATE_KEY], `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`)
+  console.log('Infura provider addresses: ', provider.getAddresses())
+  liveProvider = provider
+  return provider
+}
 
 module.exports = {
   contracts_build_directory: path.join(__dirname, "/gen/contracts"),
@@ -24,8 +30,9 @@ module.exports = {
      network_id: "*",       // Any network (default: none)
     },
     rinkeby: {
-      provider: () => provider,
+      provider: liveProviderGetter,
       network_id: 4,
+      chainId: 4,
       gas: 4500000,        // Ropsten has a lower block limit than mainnet
       gasPrice: 10000000000,
       // confirmations: 2,    // # of confs to wait between deployments. (default: 0)
