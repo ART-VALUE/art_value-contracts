@@ -1,5 +1,7 @@
 /node_modules/
+/node_modules-BAK/
 /.openzeppelin
 /dist/
 /gen/
 /.env
+/.vscode/

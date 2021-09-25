@@ -2,8 +2,8 @@
 
 ## Live versions
 
-* [**Rinkeby: 0x310411ceda6235ad7ce6e8db3febc95870af8892**](https://rinkeby.etherscan.io/address/0x310411ceda6235ad7ce6e8db3febc95870af8892)
-* **Mainnet**: not deployed yet
+* [**Rinkeby**: 0x310411ceda6235ad7ce6e8db3febc95870af8892](https://rinkeby.etherscan.io/address/0x310411ceda6235ad7ce6e8db3febc95870af8892)
+* [**Mainnet**: 0x15803e5557274268b919816a29798b37fdd2279d](https://etherscan.io/address/0x15803e5557274268b919816a29798b37fdd2279d)
 
 ## Building
 
@@ -54,18 +54,18 @@ npm run truffle-console -- --network rinkeby
 
 Get contract reference:
 ```
-truffle(rinkeby)> const avn = await ArtValueNumberV1.at('<address>')
+truffle(rinkeby)> const av = await ArtValueV1.at('<address>')
 ```
 
 Do stuff:
 ```
-truffle(rinkeby)> avn.numberBaseURI()
-'https://artvalue.org/n/'
+truffle(rinkeby)> av.numberBaseURI()
+'https://artvalue.org/m/n/'
 ```
 
 ## OpenZeppelin Upgradeable
 
-Both Arts and ArtValueNumber use OpenZeppelin's "Upgradeable" framework.
+Both Arts and ArtValue use OpenZeppelin's "Upgradeable" framework.
 
 Read more about it here: https://docs.openzeppelin.com/upgrades-plugins/1.x/writing-upgradeable
 
@@ -88,5 +88,12 @@ npm run truffle -- run verify <contract name>@<contract address> --network <netw
 e.g.
 
 ```
-npm run truffle -- run verify TransparentUpgradeableProxy@0x25681C6Cc506745D448e60c4445F076610f1A5d2 --network rinkeby
+npm run truffle -- run verify TransparentUpgradeableProxy@0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF --network rinkeby
+npm run truffle -- run verify ArtValueV1@0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF --network rinkeby
 ```
+
+## Upgrading
+
+1. Make a copy of the contract you want to upgrade and increase its version number
+2. Make the necessary changes to that copy
+3. Add a migration script similar to `src/migrations/2_upgrade_to_ArtValueV2`

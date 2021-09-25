@@ -1,4 +1,5 @@
 const HDWalletProvider = require('@truffle/hdwallet-provider');
+const FixtureProvider = require('@trufflesuite/web3-provider-engine/subproviders/fixture');
 const path = require('path');
 require('dotenv').config()
 
@@ -10,10 +11,25 @@ const ETHERSCAN_API_KEY = process.env['ETHERSCAN_API_KEY']
 if (ETHERSCAN_API_KEY == null) throw new Error('$ETHERSCAN_API_KEY not set')
 
 let liveProvider = null;
-liveProviderGetter = () => {
+createLiveProviderGetter = (infuraNetwork) => () => {
   if (liveProvider != null) return liveProvider
-  const provider = new HDWalletProvider([DEPLOYER_PRIVATE_KEY], `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`)
+  const infuraUrl = `https://${infuraNetwork}.infura.io/v3/${INFURA_PROJECT_ID}`
+  console.log('Infura URL: ' + infuraUrl)
+  const provider = new HDWalletProvider([DEPLOYER_PRIVATE_KEY], infuraUrl)
   console.log('Infura provider addresses: ', provider.getAddresses())
+  // const fixtureProvider = new FixtureProvider({
+  //   'eth_getTransactionCount': (payload, next, end) => {
+  //     console.log('>>>>> Handle request sign')
+  //     const nonce = 25
+  //     var hexNonce = nonce.toString(16)
+  //     if (hexNonce.length%2) hexNonce = '0'+hexNonce
+  //     hexNonce = '0x'+hexNonce
+  //     end(null, hexNonce)
+  //   }
+  // })
+  // subproviders = provider.engine._providers
+  // subproviders.splice(subproviders.length - 1, 0, fixtureProvider) // Add right before last (RPC subprovider)
+  // fixtureProvider.setEngine(provider.engine)
   liveProvider = provider
   return provider
 }
@@ -30,13 +46,27 @@ module.exports = {
      network_id: "*",       // Any network (default: none)
     },
     rinkeby: {
-      provider: liveProviderGetter,
+      provider: createLiveProviderGetter('rinkeby'),
       network_id: 4,
       chainId: 4,
-      gas: 4500000,        // Ropsten has a lower block limit than mainnet
-      gasPrice: 10000000000,
-      // confirmations: 2,    // # of confs to wait between deployments. (default: 0)
-      // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      // gas: 4500000,
+      gasPrice: 2000000000, // too low: 40000000
+      confirmations: 1,    // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 1,
+      disableConfirmationListener: true,
+      networkCheckTimeout: "100000",
+      websockets: false
+      // timeoutBlocks: 1,  // # of blocks before a deployment times out  (minimum/default: 50)
+      // skipDryRun: false     // Skip dry run before migrations? (default: false for public nets )
+    },
+    mainnet: {
+      provider: createLiveProviderGetter('mainnet'),
+      network_id: 1,
+      chainId: 1,
+      gas: 2000000,
+      gasPrice: 44000000000,
+      confirmations: 0,    // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 800,  // # of blocks before a deployment times out  (minimum/default: 50)
       // skipDryRun: false     // Skip dry run before migrations? (default: false for public nets )
     },
     // Another network with more advanced options...
@@ -74,12 +104,12 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.4",    // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.7",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       settings: {
        optimizer: {
          enabled: true,
-         runs: 400
+         runs: 1000
        }
       }
     }
